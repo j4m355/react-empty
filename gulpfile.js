@@ -3,6 +3,7 @@
 var gulp = require('gulp');
 var connect = require('gulp-connect'); //runs local dev server
 var open = require('gulp-open');//opens url in web browser
+var proxy = require('http-proxy-middleware');
 var browserify = require('browserify');  //bundles JS
 var reactify = require('reactify'); //Transforms react jsx to js
 var source = require('vinyl-source-stream'); // user conventional text streams with Gulp
@@ -37,7 +38,15 @@ gulp.task('connect', function(){
 		root: ['dist'],
 		port: config.port,
 		base: config.devBaseUrl,
-		livereload: true
+		livereload: true,
+		middleware: function(connect, opt) {
+			return [
+				proxy('/api', {
+					target: 'http://localhost:4443',
+					changeOrigin: true
+				});
+			]
+		}
 	});
 });
 
